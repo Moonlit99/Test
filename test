@@ -1,0 +1,592 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+
+local player = Players.LocalPlayer
+local pGui = player:WaitForChild("PlayerGui")
+
+if pGui:FindFirstChild("DiagnosticConsoleGui") then
+	pGui.DiagnosticConsoleGui:Destroy()
+end
+
+-- ScreenGui Container
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "DiagnosticConsoleGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = pGui
+
+-- ================= MAIN PANEL (520 x 300) ================= --
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.fromOffset(520, 300)
+MainFrame.Position = UDim2.new(0.5, -260, 0.5, -150)
+MainFrame.BackgroundColor3 = Color3.fromRGB(13, 14, 17)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Parent = ScreenGui
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Thickness = 1.2
+MainStroke.Color = Color3.fromRGB(45, 50, 62)
+MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+MainStroke.Parent = MainFrame
+
+-- ================= TOPBAR (DENGAN ROUND MULUS) ================= --
+
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 36)
+TopBar.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+
+local TopBarCorner = Instance.new("UICorner")
+TopBarCorner.CornerRadius = UDim.new(0, 12)
+TopBarCorner.Parent = TopBar
+
+-- Penambal sudut bawah TopBar agar menyatu lurus dengan bawahnya, tapi atasnya tetap bulat 12px
+local TopBarBottomPatch = Instance.new("Frame")
+TopBarBottomPatch.Size = UDim2.new(1, 0, 0, 12)
+TopBarBottomPatch.Position = UDim2.new(0, 0, 1, -12)
+TopBarBottomPatch.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+TopBarBottomPatch.BorderSizePixel = 0
+TopBarBottomPatch.Parent = TopBar
+
+local TopBarDivider = Instance.new("Frame")
+TopBarDivider.Size = UDim2.new(1, 0, 0, 1)
+TopBarDivider.Position = UDim2.new(0, 0, 1, -1)
+TopBarDivider.BackgroundColor3 = Color3.fromRGB(45, 50, 62)
+TopBarDivider.BorderSizePixel = 0
+TopBarDivider.ZIndex = 2
+TopBarDivider.Parent = TopBar
+
+local SysLabel = Instance.new("TextLabel")
+SysLabel.Size = UDim2.new(1, -100, 1, 0)
+SysLabel.Position = UDim2.new(0, 16, 0, 0)
+SysLabel.Font = Enum.Font.RobotoMono
+SysLabel.TextSize = 12
+SysLabel.TextColor3 = Color3.fromRGB(230, 233, 240)
+SysLabel.TextXAlignment = Enum.TextXAlignment.Left
+SysLabel.BackgroundTransparency = 1
+SysLabel.ZIndex = 2
+SysLabel.Text = "CONSOLE // DIAGNOSTIK HARDWARE"
+SysLabel.Parent = TopBar
+
+-- Tombol Close (×) dengan sudut kanan atas ikut membulat
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Name = "CloseBtn"
+CloseBtn.Size = UDim2.new(0, 32, 0, 24)
+CloseBtn.Position = UDim2.new(1, -38, 0.5, -12)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+CloseBtn.BorderSizePixel = 0
+CloseBtn.Font = Enum.Font.RobotoMono
+CloseBtn.Text = "×"
+CloseBtn.TextColor3 = Color3.fromRGB(160, 168, 180)
+CloseBtn.TextSize = 15
+CloseBtn.AutoButtonColor = false
+CloseBtn.ZIndex = 2
+CloseBtn.Parent = TopBar
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 6)
+CloseCorner.Parent = CloseBtn
+
+-- Tombol Minimize (—)
+local MinBtn = Instance.new("TextButton")
+MinBtn.Name = "MinBtn"
+MinBtn.Size = UDim2.new(0, 32, 0, 24)
+MinBtn.Position = UDim2.new(1, -74, 0.5, -12)
+MinBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+MinBtn.BorderSizePixel = 0
+MinBtn.Font = Enum.Font.RobotoMono
+MinBtn.Text = "—"
+MinBtn.TextColor3 = Color3.fromRGB(160, 168, 180)
+MinBtn.TextSize = 12
+MinBtn.AutoButtonColor = false
+MinBtn.ZIndex = 2
+MinBtn.Parent = TopBar
+
+local MinCorner = Instance.new("UICorner")
+MinCorner.CornerRadius = UDim.new(0, 6)
+MinCorner.Parent = MinBtn
+
+-- ================= SIDEBAR KIRI (DENGAN ROUND MULUS) ================= --
+
+local Sidebar = Instance.new("Frame")
+Sidebar.Name = "Sidebar"
+Sidebar.Size = UDim2.new(0, 184, 1, -36)
+Sidebar.Position = UDim2.new(0, 0, 0, 36)
+Sidebar.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+Sidebar.BorderSizePixel = 0
+Sidebar.Parent = MainFrame
+
+local SidebarCorner = Instance.new("UICorner")
+SidebarCorner.CornerRadius = UDim.new(0, 12)
+SidebarCorner.Parent = Sidebar
+
+-- Penambal sudut atas & kanan Sidebar agar hanya pojok kiri bawah yang membulat 12px
+local SidebarTopPatch = Instance.new("Frame")
+SidebarTopPatch.Size = UDim2.new(1, 0, 0, 12)
+SidebarTopPatch.Position = UDim2.new(0, 0, 0, 0)
+SidebarTopPatch.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+SidebarTopPatch.BorderSizePixel = 0
+SidebarTopPatch.Parent = Sidebar
+
+local SidebarRightPatch = Instance.new("Frame")
+SidebarRightPatch.Size = UDim2.new(0, 12, 1, 0)
+SidebarRightPatch.Position = UDim2.new(1, -12, 0, 0)
+SidebarRightPatch.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+SidebarRightPatch.BorderSizePixel = 0
+SidebarRightPatch.Parent = Sidebar
+
+local SidebarDivider = Instance.new("Frame")
+SidebarDivider.Size = UDim2.new(0, 1, 1, 0)
+SidebarDivider.Position = UDim2.new(1, -1, 0, 0)
+SidebarDivider.BackgroundColor3 = Color3.fromRGB(45, 50, 62)
+SidebarDivider.BorderSizePixel = 0
+SidebarDivider.ZIndex = 2
+SidebarDivider.Parent = Sidebar
+
+local NavList = Instance.new("ScrollingFrame")
+NavList.Size = UDim2.new(1, -16, 1, -16)
+NavList.Position = UDim2.new(0, 8, 0, 8)
+NavList.BackgroundTransparency = 1
+NavList.BorderSizePixel = 0
+NavList.ScrollBarThickness = 2
+NavList.ScrollBarImageColor3 = Color3.fromRGB(45, 50, 62)
+NavList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+NavList.CanvasSize = UDim2.new(0, 0, 0, 0)
+NavList.ZIndex = 2
+NavList.Parent = Sidebar
+
+local ListLayout = Instance.new("UIListLayout")
+ListLayout.Padding = UDim.new(0, 4)
+ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ListLayout.Parent = NavList
+
+-- ================= PANEL KONTEN KANAN ================= --
+
+local ContentArea = Instance.new("Frame")
+ContentArea.Name = "ContentArea"
+ContentArea.Size = UDim2.new(1, -184, 1, -36)
+ContentArea.Position = UDim2.new(0, 184, 0, 36)
+ContentArea.BackgroundTransparency = 1
+ContentArea.Parent = MainFrame
+
+local ContentPadding = Instance.new("UIPadding")
+ContentPadding.PaddingLeft = UDim2.new(0, 24).X
+ContentPadding.PaddingRight = UDim2.new(0, 24).X
+ContentPadding.PaddingTop = UDim2.new(0, 20).X
+ContentPadding.PaddingBottom = UDim2.new(0, 20).X
+ContentPadding.Parent = ContentArea
+
+local TargetHeader = Instance.new("TextLabel")
+TargetHeader.Size = UDim2.new(1, 0, 0, 14)
+TargetHeader.Font = Enum.Font.RobotoMono
+TargetHeader.TextSize = 10
+TargetHeader.TextColor3 = Color3.fromRGB(245, 158, 11)
+TargetHeader.TextXAlignment = Enum.TextXAlignment.Left
+TargetHeader.Text = "SUBSISTEM TARGET"
+TargetHeader.BackgroundTransparency = 1
+TargetHeader.Parent = ContentArea
+
+local TargetName = Instance.new("TextLabel")
+TargetName.Size = UDim2.new(1, 0, 0, 20)
+TargetName.Position = UDim2.new(0, 0, 0, 16)
+TargetName.Font = Enum.Font.RobotoMono
+TargetName.TextSize = 14
+TargetName.TextColor3 = Color3.fromRGB(230, 233, 240)
+TargetName.TextXAlignment = Enum.TextXAlignment.Left
+TargetName.Text = "PILIH PARAMETER DARI DAFTAR"
+TargetName.BackgroundTransparency = 1
+TargetName.Parent = ContentArea
+
+local DetailDesc = Instance.new("TextLabel")
+DetailDesc.Size = UDim2.new(1, 0, 0, 44)
+DetailDesc.Position = UDim2.new(0, 0, 0, 42)
+DetailDesc.Font = Enum.Font.RobotoMono
+DetailDesc.TextSize = 11
+DetailDesc.TextColor3 = Color3.fromRGB(115, 122, 136)
+DetailDesc.TextXAlignment = Enum.TextXAlignment.Left
+DetailDesc.TextYAlignment = Enum.TextYAlignment.Top
+DetailDesc.TextWrapped = true
+DetailDesc.Text = "Pilih modul fungsi pada menu kiri untuk memuat instruksi operasional ke instans lokal."
+DetailDesc.BackgroundTransparency = 1
+DetailDesc.Parent = ContentArea
+
+local TelemetryFrame = Instance.new("Frame")
+TelemetryFrame.Size = UDim2.new(1, 0, 0, 36)
+TelemetryFrame.Position = UDim2.new(0, 0, 0, 98)
+TelemetryFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+TelemetryFrame.BorderSizePixel = 0
+TelemetryFrame.Parent = ContentArea
+
+local TelemetryCorner = Instance.new("UICorner")
+TelemetryCorner.CornerRadius = UDim.new(0, 8)
+TelemetryCorner.Parent = TelemetryFrame
+
+local TelemetryStroke = Instance.new("UIStroke")
+TelemetryStroke.Color = Color3.fromRGB(45, 50, 62)
+TelemetryStroke.Thickness = 1
+TelemetryStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+TelemetryStroke.Parent = TelemetryFrame
+
+local TelemetryKey = Instance.new("TextLabel")
+TelemetryKey.Size = UDim2.new(0, 120, 1, 0)
+TelemetryKey.Position = UDim2.new(0, 12, 0, 0)
+TelemetryKey.Font = Enum.Font.RobotoMono
+TelemetryKey.TextSize = 10
+TelemetryKey.TextColor3 = Color3.fromRGB(115, 122, 136)
+TelemetryKey.TextXAlignment = Enum.TextXAlignment.Left
+TelemetryKey.Text = "STATE // STATUS"
+TelemetryKey.BackgroundTransparency = 1
+TelemetryKey.Parent = TelemetryFrame
+
+local TelemetryVal = Instance.new("TextLabel")
+TelemetryVal.Size = UDim2.new(1, -132, 1, 0)
+TelemetryVal.Position = UDim2.new(0, 120, 0, 0)
+TelemetryVal.Font = Enum.Font.RobotoMono
+TelemetryVal.TextSize = 11
+TelemetryVal.TextColor3 = Color3.fromRGB(230, 233, 240)
+TelemetryVal.TextXAlignment = Enum.TextXAlignment.Right
+TelemetryVal.Text = "READY"
+TelemetryVal.BackgroundTransparency = 1
+TelemetryVal.Parent = TelemetryFrame
+
+local ExecuteBtn = Instance.new("TextButton")
+ExecuteBtn.Size = UDim2.new(1, 0, 0, 38)
+ExecuteBtn.Position = UDim2.new(0, 0, 1, -38)
+ExecuteBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+ExecuteBtn.BorderSizePixel = 0
+ExecuteBtn.Font = Enum.Font.RobotoMono
+ExecuteBtn.TextSize = 11
+ExecuteBtn.TextColor3 = Color3.fromRGB(115, 122, 136)
+ExecuteBtn.Text = "TIDAK ADA PERINTAH AKTIF"
+ExecuteBtn.AutoButtonColor = false
+ExecuteBtn.Parent = ContentArea
+
+local ExecCorner = Instance.new("UICorner")
+ExecCorner.CornerRadius = UDim.new(0, 8)
+ExecCorner.Parent = ExecuteBtn
+
+local ExecStroke = Instance.new("UIStroke")
+ExecStroke.Color = Color3.fromRGB(45, 50, 62)
+ExecStroke.Thickness = 1
+ExecStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+ExecStroke.Parent = ExecuteBtn
+
+-- ================= FLOATING BEACON (MINIMIZED ICON) ================= --
+
+local MiniIcon = Instance.new("TextButton")
+MiniIcon.Name = "MiniBeacon"
+MiniIcon.Size = UDim2.fromOffset(44, 44)
+MiniIcon.Position = UDim2.new(0.5, -22, 0.5, -22)
+MiniIcon.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+MiniIcon.BorderSizePixel = 0
+MiniIcon.Text = "[C]"
+MiniIcon.TextColor3 = Color3.fromRGB(245, 158, 11)
+MiniIcon.Font = Enum.Font.RobotoMono
+MiniIcon.TextSize = 13
+MiniIcon.AutoButtonColor = false
+MiniIcon.Visible = false
+MiniIcon.Active = true
+MiniIcon.Parent = ScreenGui
+
+local MiniCorner = Instance.new("UICorner")
+MiniCorner.CornerRadius = UDim.new(0, 12)
+MiniCorner.Parent = MiniIcon
+
+local MiniStroke = Instance.new("UIStroke")
+MiniStroke.Color = Color3.fromRGB(245, 158, 11)
+MiniStroke.Thickness = 1.2
+MiniStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+MiniStroke.Parent = MiniIcon
+
+-- ================= REGISTRASI FITUR ================= --
+
+local activeConnection = nil
+local activeIndex = nil
+local buttonRegistry = {}
+
+local function registerFeature(idxCode, sysCode, title, desc, actionPrompt, telemetryProvider, actionFn)
+	local navBtn = Instance.new("TextButton")
+	navBtn.Size = UDim2.new(1, 0, 0, 34)
+	navBtn.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+	navBtn.BorderSizePixel = 0
+	navBtn.Text = ""
+	navBtn.AutoButtonColor = false
+	navBtn.ZIndex = 2
+	navBtn.Parent = NavList
+
+	local btnCorner = Instance.new("UICorner")
+	btnCorner.CornerRadius = UDim.new(0, 8)
+	btnCorner.Parent = navBtn
+
+	local selectIndicator = Instance.new("Frame")
+	selectIndicator.Size = UDim2.new(0, 3, 0, 18)
+	selectIndicator.Position = UDim2.new(0, 4, 0.5, -9)
+	selectIndicator.BackgroundColor3 = Color3.fromRGB(245, 158, 11)
+	selectIndicator.BorderSizePixel = 0
+	selectIndicator.Visible = false
+	selectIndicator.ZIndex = 3
+	selectIndicator.Parent = navBtn
+
+	local indCorner = Instance.new("UICorner")
+	indCorner.CornerRadius = UDim.new(0, 4)
+	indCorner.Parent = selectIndicator
+
+	local indexLabel = Instance.new("TextLabel")
+	indexLabel.Size = UDim2.new(0, 28, 1, 0)
+	indexLabel.Position = UDim2.new(0, 12, 0, 0)
+	indexLabel.Font = Enum.Font.RobotoMono
+	indexLabel.TextSize = 10
+	indexLabel.TextColor3 = Color3.fromRGB(115, 122, 136)
+	indexLabel.TextXAlignment = Enum.TextXAlignment.Left
+	indexLabel.Text = idxCode
+	indexLabel.BackgroundTransparency = 1
+	indexLabel.ZIndex = 3
+	indexLabel.Parent = navBtn
+
+	local itemTitle = Instance.new("TextLabel")
+	itemTitle.Size = UDim2.new(1, -44, 1, 0)
+	itemTitle.Position = UDim2.new(0, 40, 0, 0)
+	itemTitle.Font = Enum.Font.RobotoMono
+	itemTitle.TextSize = 11
+	itemTitle.TextColor3 = Color3.fromRGB(230, 233, 240)
+	itemTitle.TextXAlignment = Enum.TextXAlignment.Left
+	itemTitle.Text = title
+	itemTitle.BackgroundTransparency = 1
+	itemTitle.ZIndex = 3
+	itemTitle.Parent = navBtn
+
+	table.insert(buttonRegistry, {
+		Button = navBtn,
+		Indicator = selectIndicator,
+		Index = idxCode,
+		TitleLabel = itemTitle
+	})
+
+	navBtn.MouseEnter:Connect(function()
+		if activeIndex ~= idxCode then
+			navBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+		end
+	end)
+
+	navBtn.MouseLeave:Connect(function()
+		if activeIndex ~= idxCode then
+			navBtn.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+		end
+	end)
+
+	navBtn.MouseButton1Click:Connect(function()
+		activeIndex = idxCode
+
+		for _, item in ipairs(buttonRegistry) do
+			if item.Index == idxCode then
+				item.Button.BackgroundColor3 = Color3.fromRGB(32, 36, 45)
+				item.Indicator.Visible = true
+				item.TitleLabel.TextColor3 = Color3.fromRGB(245, 158, 11)
+			else
+				item.Button.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+				item.Indicator.Visible = false
+				item.TitleLabel.TextColor3 = Color3.fromRGB(230, 233, 240)
+			end
+		end
+
+		TargetHeader.Text = "SUBSISTEM: " .. sysCode
+		TargetName.Text = title
+		DetailDesc.Text = desc
+		TelemetryVal.Text = telemetryProvider()
+
+		ExecuteBtn.Text = actionPrompt
+		ExecuteBtn.TextColor3 = Color3.fromRGB(13, 14, 17)
+		ExecuteBtn.BackgroundColor3 = Color3.fromRGB(245, 158, 11)
+		ExecStroke.Color = Color3.fromRGB(245, 158, 11)
+
+		if activeConnection then
+			activeConnection:Disconnect()
+		end
+
+		activeConnection = ExecuteBtn.MouseButton1Click:Connect(function()
+			actionFn()
+			TelemetryVal.Text = telemetryProvider()
+		end)
+	end)
+end
+
+registerFeature(
+	"[01]",
+	"PHYS_HUMANOID_SPEED",
+	"WALKSPEED_OVERRIDE",
+	"Mengganti limit kecepatan linear pada instance Humanoid pemain ke 50 studs/detik.",
+	"COMMIT // WALK_SPEED = 50",
+	function()
+		local hum = player.Character and player.Character:FindFirstChild("Humanoid")
+		return hum and (hum.WalkSpeed .. " STUDS/S") or "ERR: NO_HUMANOID"
+	end,
+	function()
+		local hum = player.Character and player.Character:FindFirstChild("Humanoid")
+		if hum then hum.WalkSpeed = 50 end
+	end
+)
+
+registerFeature(
+	"[02]",
+	"PHYS_HUMANOID_JUMP",
+	"JUMPPOWER_MODIFIER",
+	"Menyetel daya impuls vertikal Humanoid karakter ke 120 satuan gaya lompat.",
+	"COMMIT // JUMP_POWER = 120",
+	function()
+		local hum = player.Character and player.Character:FindFirstChild("Humanoid")
+		return hum and (hum.JumpPower .. " FORCE") or "ERR: NO_HUMANOID"
+	end,
+	function()
+		local hum = player.Character and player.Character:FindFirstChild("Humanoid")
+		if hum then hum.JumpPower = 120 end
+	end
+)
+
+registerFeature(
+	"[03]",
+	"ENGINE_LIGHTING_ENV",
+	"ILLUMINATION_TOGGLE",
+	"Menyetel nilai properti Lighting.Brightness ke 2 dan menonaktifkan layer GlobalShadows.",
+	"EXECUTE // TOGGLE_LIGHTING",
+	function()
+		return Lighting.GlobalShadows and "SHADOWS_ON" or "ILLUM_MAX_NO_SHADOW"
+	end,
+	function()
+		if Lighting.Brightness == 1 then
+			Lighting.Brightness = 2
+			Lighting.GlobalShadows = false
+		else
+			Lighting.Brightness = 1
+			Lighting.GlobalShadows = true
+		end
+	end
+)
+
+registerFeature(
+	"[04]",
+	"SYS_HUMANOID_RESET",
+	"PARAM_NORMALIZATION",
+	"Mengembalikan seluruh parameter manipulasi fisik (WalkSpeed 16, JumpPower 50) ke nilai baku engine.",
+	"EXECUTE // RESET_TO_DEFAULT",
+	function()
+		local hum = player.Character and player.Character:FindFirstChild("Humanoid")
+		if hum and hum.WalkSpeed == 16 and hum.JumpPower == 50 then
+			return "NOMINAL"
+		end
+		return "MODIFIED"
+	end,
+	function()
+		local hum = player.Character and player.Character:FindFirstChild("Humanoid")
+		if hum then
+			hum.WalkSpeed = 16
+			hum.JumpPower = 50
+		end
+	end
+)
+
+-- ================= SISTEM DRAG & RESTORE BEBAS SNAP-BACK ================= --
+
+-- State tunggal agar drag MainFrame & MiniIcon tidak pernah bentrok
+local activeDragTarget = nil -- "Main" atau "Icon"
+local dragStartMouse = nil
+local dragStartUDim = nil
+local iconMoved = false
+
+-- Hover & Click Tombol Close
+CloseBtn.MouseEnter:Connect(function()
+	CloseBtn.BackgroundColor3 = Color3.fromRGB(210, 50, 60)
+	CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+end)
+CloseBtn.MouseLeave:Connect(function()
+	CloseBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+	CloseBtn.TextColor3 = Color3.fromRGB(160, 168, 180)
+end)
+CloseBtn.MouseButton1Click:Connect(function()
+	ScreenGui.Enabled = false
+end)
+
+-- Hover & Click Tombol Minimize
+MinBtn.MouseEnter:Connect(function()
+	MinBtn.BackgroundColor3 = Color3.fromRGB(38, 42, 52)
+	MinBtn.TextColor3 = Color3.fromRGB(245, 158, 11)
+end)
+MinBtn.MouseLeave:Connect(function()
+	MinBtn.BackgroundColor3 = Color3.fromRGB(28, 31, 38)
+	MinBtn.TextColor3 = Color3.fromRGB(160, 168, 180)
+end)
+
+MinBtn.MouseButton1Click:Connect(function()
+	activeDragTarget = nil -- Reset semua sesi drag
+	-- Salin langsung UDim2 Position milik MainFrame ke MiniIcon (bebas bug AbsolutePosition)
+	MiniIcon.Position = MainFrame.Position
+	MainFrame.Visible = false
+	MiniIcon.Visible = true
+end)
+
+-- Mulai Drag pada TopBar (MainFrame)
+TopBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		activeDragTarget = "Main"
+		dragStartMouse = input.Position
+		dragStartUDim = MainFrame.Position
+	end
+end)
+
+-- Mulai Drag / Klik pada MiniIcon
+MiniIcon.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		activeDragTarget = "Icon"
+		iconMoved = false
+		dragStartMouse = input.Position
+		dragStartUDim = MiniIcon.Position
+	end
+end)
+
+-- Pergerakan Mouse Global
+UserInputService.InputChanged:Connect(function(input)
+	if not activeDragTarget then return end
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		local delta = input.Position - dragStartMouse
+
+		if activeDragTarget == "Main" then
+			MainFrame.Position = UDim2.new(
+				dragStartUDim.X.Scale,
+				dragStartUDim.X.Offset + delta.X,
+				dragStartUDim.Y.Scale,
+				dragStartUDim.Y.Offset + delta.Y
+			)
+		elseif activeDragTarget == "Icon" then
+			if math.abs(delta.X) > 4 or math.abs(delta.Y) > 4 then
+				iconMoved = true
+			end
+			MiniIcon.Position = UDim2.new(
+				dragStartUDim.X.Scale,
+				dragStartUDim.X.Offset + delta.X,
+				dragStartUDim.Y.Scale,
+				dragStartUDim.Y.Offset + delta.Y
+			)
+		end
+	end
+end)
+
+-- Selesai Klik / Lepas Mouse Global
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if activeDragTarget == "Icon" and not iconMoved then
+			-- Jika diklik tanpa digeser, salin UDim2 Position terkini dari MiniIcon ke MainFrame
+			MainFrame.Position = MiniIcon.Position
+			MiniIcon.Visible = false
+			MainFrame.Visible = true
+		end
+		activeDragTarget = nil
+	end
+end)
